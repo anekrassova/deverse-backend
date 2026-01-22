@@ -26,14 +26,14 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    return this.userRepo.create(
+    return await this.userRepo.create({
       name,
       surname,
       username,
       profession,
       email,
-      hashedPassword,
-    );
+      password: hashedPassword,
+    });
   }
 
   async login(email: string, password: string) {
