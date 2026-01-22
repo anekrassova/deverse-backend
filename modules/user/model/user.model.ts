@@ -1,6 +1,11 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../../../config/database.js';
 
+export enum UserRole {
+  Admin = 'Admin',
+  User = 'User',
+}
+
 export interface UserAttributes {
   id: number;
   email: string;
@@ -11,7 +16,7 @@ export interface UserAttributes {
   avatar_url?: string | null;
   header_url?: string | null;
   profession: string;
-  role: 'USER' | 'ADMIN';
+  role: UserRole;
   created_at: Date;
   updated_at: Date;
 }
@@ -34,7 +39,7 @@ export class User
   declare avatar_url: string | null;
   declare header_url: string | null;
   declare profession: string;
-  declare role: 'USER' | 'ADMIN';
+  declare role: UserRole;
   declare created_at: Date;
   declare updated_at: Date;
 }
@@ -90,9 +95,9 @@ User.init(
     },
 
     role: {
-      type: DataTypes.ENUM('USER', 'ADMIN'),
+      type: new DataTypes.STRING(50),
       allowNull: false,
-      defaultValue: 'USER',
+      defaultValue: UserRole.User,
     },
 
     created_at: {
