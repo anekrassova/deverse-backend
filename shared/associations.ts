@@ -2,6 +2,7 @@ import { User } from '../modules/user/model/user.model.js';
 import { Post } from '../modules/post/model/post.model.js';
 import { Like } from '../modules/post/model/like.model.js';
 import { PostComment } from '../modules/post/model/post_comment.model.js';
+import { Project } from '../modules/project/model/project.model.js';
 
 export const setupAssociations = () => {
   // USER ↔ POSTS
@@ -57,5 +58,16 @@ export const setupAssociations = () => {
   Like.belongsTo(Post, {
     foreignKey: 'post_id',
     as: 'post',
+  });
+
+  // USER ↔ PROJECTS
+  User.hasMany(Project, {
+    foreignKey: 'user_id',
+    as: 'projects',
+  });
+
+  Project.belongsTo(User, {
+    foreignKey: 'user_id',
+    as: 'owner',
   });
 };
