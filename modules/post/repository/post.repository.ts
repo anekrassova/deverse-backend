@@ -16,12 +16,14 @@ export class PostRepository {
     return {
       include: [
         [
-          sequelize.literal(`(SELECT COUNT(*) FROM likes WHERE likes.post_id = post.id)`),
+          sequelize.literal(
+            `(SELECT COUNT(*) FROM \`like\` WHERE \`like\`.post_id = Post.id)`,
+          ),
           'likesCount',
         ],
         [
           sequelize.literal(
-            `(SELECT COUNT(*) FROM post_comments WHERE post_comments.post_id = post.id)`,
+            `(SELECT COUNT(*) FROM post_comment WHERE post_comment.post_id = Post.id)`,
           ),
           'commentsCount',
         ],
@@ -37,14 +39,20 @@ export class PostRepository {
   // НАЙТИ ПОСТ ПО АЙДИ
   async readById(postId: number): Promise<Post | null> {
     return Post.findByPk(postId, {
-      attributes: this.baseAttributes(),
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+        include: this.baseAttributes().include,
+      },
     });
   }
 
   // НАЙТИ ВСЕ ПОСТЫ
   async readAll(): Promise<Post[]> {
     return Post.findAll({
-      attributes: this.baseAttributes(),
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+        include: this.baseAttributes().include,
+      },
       order: [['created_at', 'DESC']],
     });
   }
@@ -53,7 +61,10 @@ export class PostRepository {
   async readAllByUserId(userId: number): Promise<Post[]> {
     return Post.findAll({
       where: { user_id: userId },
-      attributes: this.baseAttributes(),
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+        include: this.baseAttributes().include,
+      },
       order: [['created_at', 'DESC']],
     });
   }
@@ -65,7 +76,14 @@ export class PostRepository {
       throw new Error('Post not found');
     }
 
-    return post.update(data);
+    await post.update(data);
+
+    return Post.findByPk(postId, {
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+        include: this.baseAttributes().include,
+      },
+    }) as Promise<Post>;
   }
 
   // УДАЛИТЬ ПОСТ

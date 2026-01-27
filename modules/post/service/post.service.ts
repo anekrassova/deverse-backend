@@ -40,7 +40,7 @@ export class PostService {
     }
 
     const prompt = `
-      Summarize the following post content in 1–2 short sentences.
+      Summarize the following post content in 1 short sentences.
       Do not add any new information.
       Use neutral, informative tone.
       Do not change language of the post.
@@ -48,10 +48,18 @@ export class PostService {
       ${post.content}
       `;
 
-    return await this.aiService.generate(prompt);
+    // реальное обращение к апи (раскомментить при обращении к апи)
+    //const postSummary = await this.aiService.generate(prompt);
+
+    // моковая подмена обращения к апи (закомментить при обращени к апи)
+    const postSummary = 'Это укороченная версия поста.';
+
+    return { summary: postSummary };
   }
 
-  // РЕДАКТИРОВАТЬ ПОСТ
+  // todo ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
+
+  // РЕДАКТИРОВАТЬ КОНТЕНТ ПОСТА
   async updatePostContent(postId: number, content: string, requestUser: User) {
     const post = await this.postRepository.readById(postId);
 

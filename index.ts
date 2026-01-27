@@ -1,9 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
-import { createUserRoutes } from './modules/user';
 import { initDatabase } from './config/database.js';
 import { setupAssociations } from './shared/associations.js';
 import passport from './config/passport.js';
+
+import { userRoutes } from './modules/user';
+import { postRoutes } from './modules/post';
+
 import { errorHandler } from './shared/middleware/handleError';
 
 const app = express();
@@ -16,7 +19,8 @@ app.use(passport.initialize());
   await initDatabase();
   setupAssociations();
 
-  app.use('/user', createUserRoutes());
+  app.use('/user', userRoutes());
+  app.use('/post', postRoutes());
 
   app.use(errorHandler);
 

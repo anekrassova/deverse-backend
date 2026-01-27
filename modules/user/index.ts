@@ -3,7 +3,7 @@ import { UserRepository } from './repository/user.repository.js';
 import { AuthService } from './service/auth.service.js';
 import { createAuthRouter } from './routes/auth.routes.js';
 
-export const createUserRoutes = (): Router => {
+export const userRoutes = (): Router => {
   const userRepository = new UserRepository();
   const authService = new AuthService(userRepository);
 

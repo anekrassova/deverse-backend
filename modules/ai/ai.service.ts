@@ -6,7 +6,7 @@ export class AiService {
 
   constructor() {
     this.client = new GoogleGenAI({
-      apiKey: 'process.env.GEMINI_TOKEN',
+      apiKey: process.env.GEMINI_TOKEN,
     });
   }
 
@@ -16,21 +16,23 @@ export class AiService {
       input: prompt,
     });
 
-    const outputs = interaction.outputs;
-    if (!outputs || outputs.length === 0) {
+    console.debug('[AI] outputs:', JSON.stringify(interaction.outputs, null, 2));
+
+    if (!interaction.outputs?.length) {
       return '';
     }
 
-    const lastOutput = outputs[outputs.length - 1];
+    const text =
+      interaction.outputs
+        ?.filter(
+          (
+            part,
+          ): part is Extract<(typeof interaction.outputs)[number], { type: 'text' }> =>
+            part.type === 'text',
+        )
+        .map((part) => part.text)
+        .join('') ?? '';
 
-    if (!('content' in lastOutput) || !Array.isArray(lastOutput.content)) {
-      return '';
-    }
-
-    const textPart = lastOutput.content.find(
-      (part): part is { text: string } => typeof (part as any).text === 'string',
-    );
-
-    return textPart?.text ?? '';
+    return text;
   }
 }
