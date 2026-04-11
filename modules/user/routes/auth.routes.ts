@@ -6,6 +6,24 @@ import { handleValidation } from '../../../shared/middleware/handleValidation.js
 export const createAuthRouter = (authService: AuthService): Router => {
   const router = Router();
 
+  /**
+   * @openapi
+   * /user/register:
+   *   post:
+   *     tags: [user]
+   *     summary: Register new user
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UserRegisterRequest'
+   *     responses:
+   *       201:
+   *         description: Created
+   *       400:
+   *         description: User already exists / Username already in use
+   */
   router.post(
     '/register',
     registerValidator,
@@ -37,6 +55,28 @@ export const createAuthRouter = (authService: AuthService): Router => {
     },
   );
 
+  /**
+   * @openapi
+   * /user/login:
+   *   post:
+   *     tags: [user]
+   *     summary: Login user
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UserLoginRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/UserLoginResponse'
+   *       401:
+   *         description: Invalid credentials
+   */
   router.post(
     '/login',
     loginValidator,

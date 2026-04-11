@@ -11,6 +11,28 @@ export const createCommentRouter = (commentService: CommentService): Router => {
   const router = Router();
 
   // СОЗДАТЬ КОММЕНТАРИЙ
+  /**
+   * @openapi
+   * /post/comment/create:
+   *   post:
+   *     tags: [comment]
+   *     summary: Create comment
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/CommentCreateRequest'
+   *     responses:
+   *       201:
+   *         description: Created
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   */
   router.post(
     '/create',
     passport.authenticate('jwt', { session: false }),
@@ -34,6 +56,30 @@ export const createCommentRouter = (commentService: CommentService): Router => {
   );
 
   // УДАЛИТЬ КОММЕНТАРИЙ
+  /**
+   * @openapi
+   * /post/comment/delete/{id}:
+   *   delete:
+   *     tags: [comment]
+   *     summary: Delete comment
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *     responses:
+   *       204:
+   *         description: No Content
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   *       404:
+   *         description: Comment not found
+   */
   router.delete(
     '/delete/:id',
     passport.authenticate('jwt', { session: false }),
@@ -55,4 +101,3 @@ export const createCommentRouter = (commentService: CommentService): Router => {
 
   return router;
 };
-
