@@ -3,6 +3,7 @@ import { handleValidation } from '../../../shared/middleware/handleValidation.js
 import { idParamValidator } from '../../../shared/validator/idParamValidator.js';
 import passport from '../../../config/passport.js';
 import { roles } from '../../../shared/middleware/roles.js';
+import { optionalJwt } from '../../../shared/middleware/optionalJwt.js';
 
 import { UserRole, User } from '../../user/model/user.model.js';
 
@@ -58,7 +59,10 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/get/{id}:
    *   get:
    *     tags: [post]
-   *     summary: Get post by id
+   *     summary: Get post by id (isLiked works with JWT)
+   *     security:
+   *       - bearerAuth: []
+   *       - {}
    *     parameters:
    *       - in: path
    *         name: id
@@ -73,12 +77,14 @@ export const createPostRouter = (postService: PostService): Router => {
    */
   router.get(
     '/get/:id',
+    optionalJwt,
     idParamValidator,
     handleValidation,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const id = Number(req.params.id);
-        const post = await postService.getPostById(id);
+        const reqUser = req.user as User | undefined;
+        const post = await postService.getPostById(id, reqUser?.id);
 
         res.status(200).json(post);
       } catch (error) {
@@ -93,7 +99,10 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/users/{id}:
    *   get:
    *     tags: [post]
-   *     summary: Get all posts by user id
+   *     summary: Get all posts by user id (isLiked works with JWT)
+   *     security:
+   *       - bearerAuth: []
+   *       - {}
    *     parameters:
    *       - in: path
    *         name: id
@@ -106,12 +115,14 @@ export const createPostRouter = (postService: PostService): Router => {
    */
   router.get(
     '/users/:id',
+    optionalJwt,
     idParamValidator,
     handleValidation,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const userId = Number(req.params.id);
-        const posts = await postService.getUsersPosts(userId);
+        const reqUser = req.user as User | undefined;
+        const posts = await postService.getUsersPosts(userId, reqUser?.id);
 
         res.status(200).json(posts);
       } catch (error) {

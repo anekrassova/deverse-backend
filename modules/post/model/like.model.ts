@@ -51,5 +51,11 @@ Like.init(
     tableName: 'like',
     underscored: true,
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_id', 'post_id'],
+      },
+    ],
   },
 );

@@ -12,7 +12,7 @@ export interface UpdatePostData {
 }
 
 export class PostRepository {
-  private baseAttributes(): { include: ProjectionAlias[] } {
+  private baseAttributes(currentUserId?: number): { include: ProjectionAlias[] } {
     return {
       include: [
         [
@@ -27,6 +27,16 @@ export class PostRepository {
           ),
           'commentsCount',
         ],
+        [
+          currentUserId
+            ? sequelize.literal(
+                `(EXISTS(SELECT 1 FROM \`like\` WHERE \`like\`.post_id = Post.id AND \`like\`.user_id = ${sequelize.escape(
+                  currentUserId,
+                )}))`,
+              )
+            : sequelize.literal('0'),
+          'isLiked',
+        ],
       ],
     };
   }
@@ -37,33 +47,33 @@ export class PostRepository {
   }
 
   // НАЙТИ ПОСТ ПО АЙДИ
-  async readById(postId: number): Promise<Post | null> {
+  async readById(postId: number, currentUserId?: number): Promise<Post | null> {
     return Post.findByPk(postId, {
       attributes: {
         exclude: ['created_at', 'updated_at'],
-        include: this.baseAttributes().include,
+        include: this.baseAttributes(currentUserId).include,
       },
     });
   }
 
   // НАЙТИ ВСЕ ПОСТЫ
-  async readAll(): Promise<Post[]> {
+  async readAll(currentUserId?: number): Promise<Post[]> {
     return Post.findAll({
       attributes: {
         exclude: ['created_at', 'updated_at'],
-        include: this.baseAttributes().include,
+        include: this.baseAttributes(currentUserId).include,
       },
       order: [['created_at', 'DESC']],
     });
   }
 
   // НАЙТИ ПОСТЫ КОНКРЕТНОГО ПОЛЬЗОВАТЕЛЯ
-  async readAllByUserId(userId: number): Promise<Post[]> {
+  async readAllByUserId(userId: number, currentUserId?: number): Promise<Post[]> {
     return Post.findAll({
       where: { user_id: userId },
       attributes: {
         exclude: ['created_at', 'updated_at'],
-        include: this.baseAttributes().include,
+        include: this.baseAttributes(currentUserId).include,
       },
       order: [['created_at', 'DESC']],
     });

@@ -16,8 +16,8 @@ export class PostService {
   }
 
   // ПОЛУЧИТЬ ПОСТ ПО АЙДИ
-  async getPostById(postId: number) {
-    const post = await this.postRepository.readById(postId);
+  async getPostById(postId: number, currentUserId?: number) {
+    const post = await this.postRepository.readById(postId, currentUserId);
 
     if (!post) {
       throw new CustomError(404, 'Post not found');
@@ -27,8 +27,8 @@ export class PostService {
   }
 
   // ПОЛУЧИТЬ ВСЕ ПОСТЫ ПОЛЬЗОВАТЕЛЯ
-  async getUsersPosts(user_id: number) {
-    return this.postRepository.readAllByUserId(user_id);
+  async getUsersPosts(user_id: number, currentUserId?: number) {
+    return this.postRepository.readAllByUserId(user_id, currentUserId);
   }
 
   // ПОЛУЧИТЬ САММАРИ ПОСТА

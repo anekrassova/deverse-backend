@@ -7,6 +7,9 @@ export interface PostAttributes {
   content: string;
   created_at: Date;
   updated_at: Date;
+  likesCount?: number;
+  commentsCount?: number;
+  isLiked?: boolean | number;
 }
 
 type PostCreationAttributes = Optional<
@@ -23,6 +26,9 @@ export class Post
   declare content: string;
   declare created_at: Date;
   declare updated_at: Date;
+  declare likesCount?: number;
+  declare commentsCount?: number;
+  declare isLiked?: boolean | number;
 }
 
 Post.init(

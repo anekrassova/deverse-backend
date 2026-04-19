@@ -12,6 +12,7 @@ export const swaggerSpec = swaggerJSDoc({
       { name: 'user' },
       { name: 'post' },
       { name: 'comment' },
+      { name: 'like' },
     ],
     components: {
       securitySchemes: {
@@ -103,4 +104,3 @@ export const swaggerSpec = swaggerJSDoc({
     'dist/modules/**/routes/*.routes.js',
   ],
 });
-
