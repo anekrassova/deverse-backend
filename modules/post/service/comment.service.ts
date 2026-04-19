@@ -23,4 +23,17 @@ export class CommentService {
 
     await this.postCommentRepository.delete(commentId);
   }
+
+  // РЕДАКТИРОВАТЬ КОММЕНТАРИЙ
+  async updateCommentContent(commentId: number, content: string, requestUser: User) {
+    const comment = await this.postCommentRepository.readById(commentId);
+
+    if (!comment) {
+      throw new CustomError(404, 'Comment not found');
+    }
+
+    assertOwnershipOrAdmin(requestUser, comment.user_id);
+
+    return this.postCommentRepository.update(commentId, { content });
+  }
 }

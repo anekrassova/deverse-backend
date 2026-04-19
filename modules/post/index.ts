@@ -15,7 +15,7 @@ export const postRoutes = (): Router => {
   const postCommentRepository = new PostCommentRepository();
   const likeRepository = new LikeRepository();
   const aiService = new AiService();
-  const postService = new PostService(postRepository, aiService);
+  const postService = new PostService(postRepository, aiService, postCommentRepository);
   const commentService = new CommentService(postCommentRepository);
   const likeService = new LikeService(likeRepository);
 

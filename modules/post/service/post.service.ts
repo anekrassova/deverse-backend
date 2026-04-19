@@ -3,11 +3,13 @@ import { PostRepository } from '../repository/post.repository.js';
 import { assertOwnershipOrAdmin } from '../../../shared/permissions.js';
 import { User } from '../../user/model/user.model.js';
 import { AiService } from '../../ai/ai.service.js';
+import { PostCommentRepository } from '../repository/post_comment.repository.js';
 
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
     private readonly aiService: AiService,
+    private readonly postCommentRepository: PostCommentRepository,
   ) {}
 
   // СОЗДАТЬ ПОСТ
@@ -57,7 +59,16 @@ export class PostService {
     return { summary: postSummary };
   }
 
-  // todo ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
+  // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
+  async getPostComments(postId: number) {
+    const post = await this.postRepository.readById(postId);
+
+    if (!post) {
+      throw new CustomError(404, 'Post not found');
+    }
+
+    return this.postCommentRepository.readAllByPostId(postId);
+  }
 
   // РЕДАКТИРОВАТЬ КОНТЕНТ ПОСТА
   async updatePostContent(postId: number, content: string, requestUser: User) {

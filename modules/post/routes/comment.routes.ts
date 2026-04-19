@@ -99,5 +99,61 @@ export const createCommentRouter = (commentService: CommentService): Router => {
     },
   );
 
+  // РЕДАКТИРОВАТЬ КОММЕНТАРИЙ
+  /**
+   * @openapi
+   * /post/comment/update/{id}:
+   *   patch:
+   *     tags: [comment]
+   *     summary: Update comment
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/CommentUpdateRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   *       404:
+   *         description: Comment not found
+   */
+  router.patch(
+    '/update/:id',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.User, UserRole.Admin]),
+    idParamValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const commentId = Number(req.params.id);
+        const reqUser = req.user as User;
+        const { content } = req.body;
+
+        const updated = await commentService.updateCommentContent(
+          commentId,
+          content,
+          reqUser,
+        );
+
+        res.status(200).json(updated);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
   return router;
 };

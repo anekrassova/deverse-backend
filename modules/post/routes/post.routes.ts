@@ -172,6 +172,39 @@ export const createPostRouter = (postService: PostService): Router => {
   );
 
   // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
+  /**
+   * @openapi
+   * /post/comments/{id}:
+   *   get:
+   *     tags: [comment]
+   *     summary: Get all comments for post
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: OK
+   *       404:
+   *         description: Post not found
+   */
+  router.get(
+    '/comments/:id',
+    idParamValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const postId = Number(req.params.id);
+        const comments = await postService.getPostComments(postId);
+
+        res.status(200).json(comments);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
   // РЕДАКТИРОВАТЬ КОНТЕНТ ПОСТА
   /**

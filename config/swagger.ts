@@ -96,6 +96,13 @@ export const swaggerSpec = swaggerJSDoc({
             content: { type: 'string' },
           },
         },
+        CommentUpdateRequest: {
+          type: 'object',
+          required: ['content'],
+          properties: {
+            content: { type: 'string' },
+          },
+        },
       },
     },
   },
