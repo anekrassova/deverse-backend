@@ -20,6 +20,11 @@ export class UserRepository {
     return User.findOne({ where: { username } });
   }
 
+  // НАЙТИ ПОЛЬЗОВАТЕЛЯ ПО АЙДИ
+  async findById(id: number): Promise<User | null> {
+    return User.findOne({ where: { id } });
+  }
+
   // СОЗДАНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
   async create(data: CreateUserData): Promise<User> {
     return User.create(data);

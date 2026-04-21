@@ -2,10 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { handleValidation } from '../../../shared/middleware/handleValidation.js';
 import passport from '../../../config/passport.js';
 import { roles } from '../../../shared/middleware/roles.js';
-
 import { UserRole } from '../model/user.model.js';
-
-import upload from '../../../config/multer.js';
 import { UserService } from '../service/user.service.js';
 
 const createUserRouter = (userService: UserService): Router => {
@@ -16,12 +13,10 @@ const createUserRouter = (userService: UserService): Router => {
     '/changeProfileAvatar',
     passport.authenticate('jwt', { session: false }),
     roles([UserRole.User, UserRole.Admin]),
-    upload.single('avatar'),
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        if (!req.file) {
-          return res.status(400).json({ message: 'File does not uploaded.' });
-        }
+        // todo file upload will be implemented with MinIO
+        return res.status(501).json({ message: 'Not implemented yet.' });
       } catch (error) {
         next(error);
       }
