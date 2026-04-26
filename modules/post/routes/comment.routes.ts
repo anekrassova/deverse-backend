@@ -16,7 +16,7 @@ export const createCommentRouter = (commentService: CommentService): Router => {
    * /post/comment/create:
    *   post:
    *     tags: [comment]
-   *     summary: Create comment
+   *     summary: Create comment (JWT required, roles User/Admin)
    *     security:
    *       - bearerAuth: []
    *     requestBody:
@@ -61,7 +61,7 @@ export const createCommentRouter = (commentService: CommentService): Router => {
    * /post/comment/delete/{id}:
    *   delete:
    *     tags: [comment]
-   *     summary: Delete comment
+   *     summary: Delete comment (JWT required, roles User/Admin; author or Admin)
    *     security:
    *       - bearerAuth: []
    *     parameters:
@@ -105,7 +105,7 @@ export const createCommentRouter = (commentService: CommentService): Router => {
    * /post/comment/update/{id}:
    *   patch:
    *     tags: [comment]
-   *     summary: Update comment
+   *     summary: Update comment (JWT required, roles User/Admin; author or Admin)
    *     security:
    *       - bearerAuth: []
    *     parameters:

@@ -18,7 +18,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/create:
    *   post:
    *     tags: [post]
-   *     summary: Create post
+   *     summary: Create post (JWT required, roles User/Admin)
    *     security:
    *       - bearerAuth: []
    *     requestBody:
@@ -59,7 +59,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/get/{id}:
    *   get:
    *     tags: [post]
-   *     summary: Get post by id (isLiked works with JWT)
+   *     summary: Get post by id (JWT optional, public; isLiked with JWT)
    *     security:
    *       - bearerAuth: []
    *       - {}
@@ -99,7 +99,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/users/{id}:
    *   get:
    *     tags: [post]
-   *     summary: Get all posts by user id (isLiked works with JWT)
+   *     summary: Get all posts by user id (JWT optional, public; isLiked with JWT)
    *     security:
    *       - bearerAuth: []
    *       - {}
@@ -137,7 +137,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/summary/{id}:
    *   get:
    *     tags: [post]
-   *     summary: Get post summary by id
+   *     summary: Get post summary by id (JWT no, public)
    *     parameters:
    *       - in: path
    *         name: id
@@ -177,7 +177,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/comments/{id}:
    *   get:
    *     tags: [comment]
-   *     summary: Get all comments for post
+   *     summary: Get all comments for post (JWT no, public)
    *     parameters:
    *       - in: path
    *         name: id
@@ -212,7 +212,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/update/{id}:
    *   patch:
    *     tags: [post]
-   *     summary: Update post content
+   *     summary: Update post content (JWT required, roles User/Admin; owner or Admin)
    *     security:
    *       - bearerAuth: []
    *     parameters:
@@ -264,7 +264,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/delete/{id}:
    *   delete:
    *     tags: [post]
-   *     summary: Delete post
+   *     summary: Delete post (JWT required, roles User/Admin; owner or Admin)
    *     security:
    *       - bearerAuth: []
    *     parameters:

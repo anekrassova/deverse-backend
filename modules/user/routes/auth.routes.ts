@@ -11,7 +11,7 @@ export const createAuthRouter = (authService: AuthService): Router => {
    * /user/register:
    *   post:
    *     tags: [user]
-   *     summary: Register new user
+   *     summary: Register new user (JWT no, public)
    *     requestBody:
    *       required: true
    *       content:
@@ -60,7 +60,7 @@ export const createAuthRouter = (authService: AuthService): Router => {
    * /user/login:
    *   post:
    *     tags: [user]
-   *     summary: Login user
+   *     summary: Login user (JWT no, public)
    *     requestBody:
    *       required: true
    *       content:

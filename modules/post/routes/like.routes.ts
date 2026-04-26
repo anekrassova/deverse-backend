@@ -16,7 +16,7 @@ export const createLikeRouter = (likeService: LikeService): Router => {
    * /post/like/create/{id}:
    *   post:
    *     tags: [like]
-   *     summary: Like post
+   *     summary: Like post (JWT required, roles User/Admin)
    *     security:
    *       - bearerAuth: []
    *     parameters:
@@ -61,7 +61,7 @@ export const createLikeRouter = (likeService: LikeService): Router => {
    * /post/like/delete/{id}:
    *   delete:
    *     tags: [like]
-   *     summary: Unlike post
+   *     summary: Unlike post (JWT required, roles User/Admin; only own like)
    *     security:
    *       - bearerAuth: []
    *     parameters:
@@ -102,4 +102,3 @@ export const createLikeRouter = (likeService: LikeService): Router => {
 
   return router;
 };
-
