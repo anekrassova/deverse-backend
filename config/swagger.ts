@@ -14,6 +14,7 @@ export const swaggerSpec = swaggerJSDoc({
       { name: 'comment' },
       { name: 'like' },
       { name: 'project' },
+      { name: 'follow' },
     ],
     components: {
       securitySchemes: {

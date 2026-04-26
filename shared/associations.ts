@@ -1,10 +1,32 @@
 import { User } from '../modules/user/model/user.model.js';
+import { Follower } from '../modules/user/model/follower.model.js';
 import { Post } from '../modules/post/model/post.model.js';
 import { Like } from '../modules/post/model/like.model.js';
 import { PostComment } from '../modules/post/model/post_comment.model.js';
 import { Project } from '../modules/project/model/project.model.js';
 
 export const setupAssociations = () => {
+  // USER ↔ FOLLOWERS
+  User.hasMany(Follower, {
+    foreignKey: 'follower_id',
+    as: 'followingRelations',
+  });
+
+  User.hasMany(Follower, {
+    foreignKey: 'following_id',
+    as: 'followerRelations',
+  });
+
+  Follower.belongsTo(User, {
+    foreignKey: 'follower_id',
+    as: 'follower',
+  });
+
+  Follower.belongsTo(User, {
+    foreignKey: 'following_id',
+    as: 'following',
+  });
+
   // USER ↔ POSTS
   User.hasMany(Post, {
     foreignKey: 'user_id',
