@@ -13,6 +13,7 @@ export const swaggerSpec = swaggerJSDoc({
       { name: 'post' },
       { name: 'comment' },
       { name: 'like' },
+      { name: 'project' },
     ],
     components: {
       securitySchemes: {
@@ -101,6 +102,23 @@ export const swaggerSpec = swaggerJSDoc({
           required: ['content'],
           properties: {
             content: { type: 'string' },
+          },
+        },
+        ProjectCreateRequest: {
+          type: 'object',
+          required: ['title', 'description', 'url'],
+          properties: {
+            title: { type: 'string' },
+            description: { type: 'string' },
+            url: { type: 'string' },
+          },
+        },
+        ProjectUpdateRequest: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            description: { type: 'string' },
+            url: { type: 'string' },
           },
         },
       },
