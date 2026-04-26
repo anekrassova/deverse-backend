@@ -5,15 +5,19 @@ import { createAuthRouter } from './routes/auth.routes.js';
 import { FollowerRepository } from './repository/follower.repository.js';
 import { FollowerService } from './service/follower.service.js';
 import { createFollowerRouter } from './routes/follower.routes.js';
+import { UserService } from './service/user.service.js';
+import { createUserRouter } from './routes/user.routes.js';
 
 export const userRoutes = (): Router => {
   const userRepository = new UserRepository();
   const authService = new AuthService(userRepository);
+  const userService = new UserService(userRepository);
   const followerRepository = new FollowerRepository();
   const followerService = new FollowerService(followerRepository, userRepository);
 
   const router = Router();
   router.use(createAuthRouter(authService));
+  router.use(createUserRouter(userService));
   router.use(createFollowerRouter(followerService));
 
   return router;

@@ -5,6 +5,8 @@ const parseUseSsl = (value: string | undefined): boolean => {
 };
 
 export const minioBucket = process.env.MINIO_BUCKET || 'diploma-images';
+export const minioPublicBaseUrl =
+  process.env.MINIO_PUBLIC_BASE_URL || 'http://localhost:9000';
 
 export const minioClient = new Client({
   endPoint: process.env.MINIO_ENDPOINT || 'localhost',
@@ -29,3 +31,16 @@ export const initMinio = async (): Promise<void> => {
   }
 };
 
+export const buildPublicObjectUrl = (objectKey: string): string => {
+  return `${minioPublicBaseUrl}/${minioBucket}/${objectKey}`;
+};
+
+export const extractObjectKeyFromPublicUrl = (url: string): string | null => {
+  const prefix = `${minioPublicBaseUrl}/${minioBucket}/`;
+
+  if (!url.startsWith(prefix)) {
+    return null;
+  }
+
+  return url.slice(prefix.length);
+};

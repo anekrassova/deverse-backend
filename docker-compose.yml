@@ -47,6 +47,7 @@ services:
         sleep 1;
       done;
       mc mb -p local/$$MINIO_BUCKET || true;
+      mc anonymous set download local/$$MINIO_BUCKET || true;
       echo 'minio bucket ready';
       "
 
