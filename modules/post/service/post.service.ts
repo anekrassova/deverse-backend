@@ -71,7 +71,11 @@ export class PostService {
       ${content}
       `;
 
-    const improved = await this.aiService.generate(prompt);
+    // реальный запрос к апи раскоментить
+    // const improved = await this.aiService.generate(prompt);
+
+    // это моковое, закомментить при реальном обращении к апи
+    const improved = 'Это улучшенное содержание поста!';
 
     return { content: improved };
   }
