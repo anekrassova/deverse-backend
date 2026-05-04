@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import { initDatabase } from './config/database.js';
 import { setupAssociations } from './shared/associations.js';
 import passport from './config/passport.js';
@@ -46,9 +47,7 @@ app.use(passport.initialize());
 
   app.listen(port, () => {
     console.log(
-      docsOnly
-        ? `Listening on port ${port} (DOCS_ONLY)`
-        : `Listening on port ${port}`,
+      docsOnly ? `Listening on port ${port} (DOCS_ONLY)` : `Listening on port ${port}`,
     );
   });
 })();
