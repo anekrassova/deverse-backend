@@ -15,6 +15,7 @@ import { errorHandler } from './shared/middleware/handleError';
 import { swaggerSpec } from './config/swagger.js';
 
 const app = express();
+app.use(cors());
 const port = Number(process.env.PORT) || 3000;
 const docsOnly = process.env.DOCS_ONLY === '1';
 
