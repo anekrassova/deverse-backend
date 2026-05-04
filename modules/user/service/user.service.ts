@@ -11,6 +11,15 @@ import {
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
+  // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+  async searchUsers(query: string) {
+    if (!query || query.trim().length < 1) {
+      throw new CustomError(400, 'Query is required');
+    }
+
+    return this.userRepository.search(query);
+  }
+
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА
   async changeProfileAvatar(requestUser: User, file: Express.Multer.File) {
     if (!file) {
@@ -29,13 +38,9 @@ export class UserService {
     const ext = file.mimetype.split('/')[1] || 'png';
     const objectKey = `users/${requestUser.id}/avatar-${Date.now()}.${ext}`;
 
-    await minioClient.putObject(
-      minioBucket,
-      objectKey,
-      file.buffer,
-      file.size,
-      { 'Content-Type': file.mimetype },
-    );
+    await minioClient.putObject(minioBucket, objectKey, file.buffer, file.size, {
+      'Content-Type': file.mimetype,
+    });
 
     const oldKey = user.avatar_url
       ? extractObjectKeyFromPublicUrl(user.avatar_url)
@@ -70,13 +75,9 @@ export class UserService {
     const ext = file.mimetype.split('/')[1] || 'png';
     const objectKey = `users/${requestUser.id}/header-${Date.now()}.${ext}`;
 
-    await minioClient.putObject(
-      minioBucket,
-      objectKey,
-      file.buffer,
-      file.size,
-      { 'Content-Type': file.mimetype },
-    );
+    await minioClient.putObject(minioBucket, objectKey, file.buffer, file.size, {
+      'Content-Type': file.mimetype,
+    });
 
     const oldKey = user.header_url
       ? extractObjectKeyFromPublicUrl(user.header_url)

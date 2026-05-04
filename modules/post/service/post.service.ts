@@ -59,6 +59,23 @@ export class PostService {
     return { summary: postSummary };
   }
 
+  // УЛУЧШЕНИЕ ПОСТА С ИИ
+  async improvePostContent(content: string, requestUser: User) {
+    const prompt = `
+      Improve the following post content.
+      Keep the same language.
+      Keep the meaning.
+      Make it clearer and more readable.
+      Return only improved text, without any additional comments.
+      Post content:
+      ${content}
+      `;
+
+    const improved = await this.aiService.generate(prompt);
+
+    return { content: improved };
+  }
+
   // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
   async getPostComments(postId: number) {
     const post = await this.postRepository.readById(postId);

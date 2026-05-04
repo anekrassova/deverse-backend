@@ -27,14 +27,7 @@ export const swaggerSpec = swaggerJSDoc({
       schemas: {
         UserRegisterRequest: {
           type: 'object',
-          required: [
-            'name',
-            'surname',
-            'username',
-            'profession',
-            'email',
-            'password',
-          ],
+          required: ['name', 'surname', 'username', 'profession', 'email', 'password'],
           properties: {
             name: { type: 'string' },
             surname: { type: 'string' },
@@ -83,6 +76,20 @@ export const swaggerSpec = swaggerJSDoc({
             content: { type: 'string' },
           },
         },
+        PostImproveRequest: {
+          type: 'object',
+          required: ['content'],
+          properties: {
+            content: { type: 'string' },
+          },
+        },
+        PostImproveResponse: {
+          type: 'object',
+          required: ['content'],
+          properties: {
+            content: { type: 'string' },
+          },
+        },
         PostSummaryResponse: {
           type: 'object',
           required: ['summary'],
@@ -125,8 +132,5 @@ export const swaggerSpec = swaggerJSDoc({
       },
     },
   },
-  apis: [
-    'modules/**/routes/*.routes.ts',
-    'dist/modules/**/routes/*.routes.js',
-  ],
+  apis: ['modules/**/routes/*.routes.ts', 'dist/modules/**/routes/*.routes.js'],
 });

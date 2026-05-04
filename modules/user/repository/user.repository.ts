@@ -1,4 +1,5 @@
 import { User } from '../model/user.model.js';
+import { Op } from 'sequelize';
 
 export interface CreateUserData {
   name: string;
@@ -50,5 +51,23 @@ export class UserRepository {
         exclude: ['password', 'created_at', 'updated_at'],
       },
     }) as Promise<User>;
+  }
+
+  // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+  async search(query: string): Promise<User[]> {
+    const q = query.trim();
+
+    return User.findAll({
+      where: {
+        [Op.or]: [
+          { username: { [Op.like]: `%${q}%` } },
+          { name: { [Op.like]: `%${q}%` } },
+          { surname: { [Op.like]: `%${q}%` } },
+        ],
+      },
+      attributes: ['id', 'username', 'name', 'surname', 'avatar_url', 'role'],
+      order: [['username', 'ASC']],
+      limit: 20,
+    });
   }
 }

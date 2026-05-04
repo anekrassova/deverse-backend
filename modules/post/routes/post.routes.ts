@@ -171,6 +171,51 @@ export const createPostRouter = (postService: PostService): Router => {
     },
   );
 
+  // УЛУЧШЕНИЕ ПОСТА С ИИ
+  /**
+   * @openapi
+   * /post/improve:
+   *   post:
+   *     tags: [post]
+   *     summary: Improve post content (JWT required, roles User/Admin)
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/PostImproveRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/PostImproveResponse'
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   */
+  router.post(
+    '/improve',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.User, UserRole.Admin]),
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const reqUser = req.user as User;
+        const { content } = req.body;
+
+        const result = await postService.improvePostContent(content, reqUser);
+
+        res.status(200).json(result);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
   // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
   /**
    * @openapi

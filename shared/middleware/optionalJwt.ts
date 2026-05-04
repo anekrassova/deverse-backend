@@ -15,4 +15,3 @@ export const optionalJwt = (req: Request, res: Response, next: NextFunction) => 
     return next();
   })(req, res, next);
 };
-

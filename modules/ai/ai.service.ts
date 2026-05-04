@@ -16,7 +16,7 @@ export class AiService {
       input: prompt,
     });
 
-    console.debug('[AI] outputs:', JSON.stringify(interaction.outputs, null, 2));
+    // console.debug('[AI] outputs:', JSON.stringify(interaction.outputs, null, 2));
 
     if (!interaction.outputs?.length) {
       return '';

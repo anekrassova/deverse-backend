@@ -4,6 +4,7 @@ import { Post } from '../modules/post/model/post.model.js';
 import { Like } from '../modules/post/model/like.model.js';
 import { PostComment } from '../modules/post/model/post_comment.model.js';
 import { Project } from '../modules/project/model/project.model.js';
+import { ProjectApplication } from '../modules/project/model/project_application.model.js';
 
 export const setupAssociations = () => {
   // USER ↔ FOLLOWERS
@@ -91,5 +92,27 @@ export const setupAssociations = () => {
   Project.belongsTo(User, {
     foreignKey: 'user_id',
     as: 'owner',
+  });
+
+  // PROJECT ↔ APPLICATIONS
+  Project.hasMany(ProjectApplication, {
+    foreignKey: 'project_id',
+    as: 'applications',
+  });
+
+  ProjectApplication.belongsTo(Project, {
+    foreignKey: 'project_id',
+    as: 'project',
+  });
+
+  // USER ↔ APPLICATIONS
+  User.hasMany(ProjectApplication, {
+    foreignKey: 'user_id',
+    as: 'projectApplications',
+  });
+
+  ProjectApplication.belongsTo(User, {
+    foreignKey: 'user_id',
+    as: 'applicant',
   });
 };

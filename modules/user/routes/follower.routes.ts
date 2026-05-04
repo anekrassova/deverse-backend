@@ -174,4 +174,3 @@ export const createFollowerRouter = (followerService: FollowerService): Router =
 
   return router;
 };
-

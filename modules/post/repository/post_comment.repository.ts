@@ -45,10 +45,7 @@ export class PostCommentRepository {
   }
 
   // ОБНОВИТЬ КОММЕНТАРИЙ
-  async update(
-    commentId: number,
-    data: UpdatePostCommentData,
-  ): Promise<PostComment> {
+  async update(commentId: number, data: UpdatePostCommentData): Promise<PostComment> {
     const comment = await PostComment.findByPk(commentId);
     if (!comment) {
       throw new Error('Comment not found');

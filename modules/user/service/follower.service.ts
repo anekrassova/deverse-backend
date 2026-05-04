@@ -24,11 +24,10 @@ export class FollowerService {
       throw new CustomError(404, 'User not found');
     }
 
-    const subscriptionExists =
-      await this.followerRepository.readByFollowerAndFollowing(
-        requestUser.id,
-        targetUserId,
-      );
+    const subscriptionExists = await this.followerRepository.readByFollowerAndFollowing(
+      requestUser.id,
+      targetUserId,
+    );
 
     if (subscriptionExists) {
       throw new CustomError(400, 'Already following');
@@ -43,11 +42,10 @@ export class FollowerService {
       throw new CustomError(403, 'Forbidden');
     }
 
-    const subscription =
-      await this.followerRepository.readByFollowerAndFollowing(
-        requestUser.id,
-        targetUserId,
-      );
+    const subscription = await this.followerRepository.readByFollowerAndFollowing(
+      requestUser.id,
+      targetUserId,
+    );
 
     if (!subscription) {
       throw new CustomError(404, 'Subscription not found');
@@ -79,4 +77,3 @@ export class FollowerService {
     return this.followerRepository.readFollowingUsersByUserId(userId);
   }
 }
-

@@ -24,10 +24,7 @@ export class LikeService {
 
   // УДАЛИТЬ ЛАЙК С ПОСТА
   async unlikePost(postId: number, requestUser: User) {
-    const like = await this.likeRepository.readByUserAndPost(
-      requestUser.id,
-      postId,
-    );
+    const like = await this.likeRepository.readByUserAndPost(requestUser.id, postId);
 
     if (!like) {
       throw new CustomError(404, 'Like not found');

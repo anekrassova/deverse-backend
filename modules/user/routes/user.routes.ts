@@ -8,6 +8,36 @@ import upload from '../../../config/multer.js';
 export const createUserRouter = (userService: UserService): Router => {
   const router = Router();
 
+  // ПОИСК ПОЛЬЗОВАТЕЛЕЙ
+  /**
+   * @openapi
+   * /user/search:
+   *   get:
+   *     tags: [user]
+   *     summary: Search users (JWT no, public)
+   *     parameters:
+   *       - in: query
+   *         name: query
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: OK
+   *       400:
+   *         description: Bad Request
+   */
+  router.get('/search', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = String(req.query.query || '');
+      const users = await userService.searchUsers(query);
+
+      res.status(200).json(users);
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА
   /**
    * @openapi

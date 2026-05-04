@@ -51,6 +51,39 @@ services:
       echo 'minio bucket ready';
       "
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: diploma-ollama
+    restart: unless-stopped
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama_data:/root/.ollama
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: diploma-ollama-init
+    depends_on:
+      - ollama
+    entrypoint: >
+      /bin/sh -c "
+      until (echo > /dev/tcp/ollama/11434) >/dev/null 2>&1; do
+        echo 'waiting for ollama...';
+        sleep 1;
+      done;
+      ollama pull phi3:mini;
+      echo 'ollama model ready';
+      "
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: diploma-mailhog
+    restart: unless-stopped
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
 volumes:
   mysql_data:
   minio_data:
+  ollama_data:

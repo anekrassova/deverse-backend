@@ -39,6 +39,16 @@ export class ProjectRepository {
     });
   }
 
+  // НАЙТИ ВСЕ ПРОЕКТЫ
+  async readAll(): Promise<Project[]> {
+    return Project.findAll({
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+      },
+      order: [['created_at', 'DESC']],
+    });
+  }
+
   // ОБНОВИТЬ ПРОЕКТ
   async update(projectId: number, data: UpdateProjectData): Promise<Project> {
     const project = await Project.findByPk(projectId);
@@ -62,4 +72,3 @@ export class ProjectRepository {
     });
   }
 }
-

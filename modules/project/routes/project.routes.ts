@@ -10,6 +10,26 @@ import { ProjectService } from '../service/project.service.js';
 export const createProjectRouter = (projectService: ProjectService): Router => {
   const router = Router();
 
+  // ПОЛУЧИТЬ ВСЕ ПРОЕКТЫ
+  /**
+   * @openapi
+   * /project/all:
+   *   get:
+   *     tags: [project]
+   *     summary: Get all projects (JWT no, public)
+   *     responses:
+   *       200:
+   *         description: OK
+   */
+  router.get('/all', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const projects = await projectService.getAllProjects();
+      res.status(200).json(projects);
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // СОЗДАТЬ ПРОЕКТ
   /**
    * @openapi
@@ -50,6 +70,53 @@ export const createProjectRouter = (projectService: ProjectService): Router => {
         );
 
         res.status(201).json(project);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  // ОТПРАВИТЬ ЗАЯВКУ НА УЧАСТИЕ В ПРОЕКТЕ
+  /**
+   * @openapi
+   * /project/apply/{id}:
+   *   post:
+   *     tags: [project]
+   *     summary: Apply to project (JWT required, role User only; not own project)
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *     responses:
+   *       201:
+   *         description: Created
+   *       400:
+   *         description: Bad Request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   *       404:
+   *         description: Project not found
+   */
+  router.post(
+    '/apply/:id',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.User]),
+    idParamValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const projectId = Number(req.params.id);
+        const reqUser = req.user as User;
+
+        const application = await projectService.applyToProject(projectId, reqUser);
+
+        res.status(201).json(application);
       } catch (error) {
         next(error);
       }
