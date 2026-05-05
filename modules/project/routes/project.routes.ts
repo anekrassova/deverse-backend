@@ -6,6 +6,10 @@ import { roles } from '../../../shared/middleware/roles.js';
 
 import { UserRole, User } from '../../user/model/user.model.js';
 import { ProjectService } from '../service/project.service.js';
+import {
+  createProjectValidator,
+  updateProjectValidator,
+} from '../validator/project.validator.js';
 
 export const createProjectRouter = (projectService: ProjectService): Router => {
   const router = Router();
@@ -57,6 +61,8 @@ export const createProjectRouter = (projectService: ProjectService): Router => {
     '/create',
     passport.authenticate('jwt', { session: false }),
     roles([UserRole.User, UserRole.Admin]),
+    createProjectValidator,
+    handleValidation,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const reqUser = req.user as User;
@@ -227,6 +233,7 @@ export const createProjectRouter = (projectService: ProjectService): Router => {
     passport.authenticate('jwt', { session: false }),
     roles([UserRole.User, UserRole.Admin]),
     idParamValidator,
+    updateProjectValidator,
     handleValidation,
     async (req: Request, res: Response, next: NextFunction) => {
       try {

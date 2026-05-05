@@ -1,12 +1,9 @@
 import { CustomError } from '../../../shared/errors.js';
 import { UserRepository } from '../repository/user.repository.js';
 import { User } from '../model/user.model.js';
-import {
-  buildPublicObjectUrl,
-  extractObjectKeyFromPublicUrl,
-  minioBucket,
-  minioClient,
-} from '../../../config/minio.js';
+import cloudinary, {
+  extractCloudinaryPublicIdFromUrl,
+} from '../../../config/cloudinary.js';
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
@@ -35,26 +32,22 @@ export class UserService {
       throw new CustomError(404, 'User not found');
     }
 
-    const ext = file.mimetype.split('/')[1] || 'png';
-    const objectKey = `users/${requestUser.id}/avatar-${Date.now()}.${ext}`;
+    const newUrl = (file as any).path as string | undefined;
+    if (!newUrl) {
+      throw new CustomError(400, 'File does not uploaded.');
+    }
 
-    await minioClient.putObject(minioBucket, objectKey, file.buffer, file.size, {
-      'Content-Type': file.mimetype,
-    });
-
-    const oldKey = user.avatar_url
-      ? extractObjectKeyFromPublicUrl(user.avatar_url)
+    const oldPublicId = user.avatar_url
+      ? extractCloudinaryPublicIdFromUrl(user.avatar_url)
       : null;
 
-    if (oldKey) {
+    if (oldPublicId) {
       try {
-        await minioClient.removeObject(minioBucket, oldKey);
+        await cloudinary.uploader.destroy(oldPublicId, { resource_type: 'image' });
       } catch {}
     }
 
-    const publicUrl = buildPublicObjectUrl(objectKey);
-
-    return this.userRepository.update(requestUser.id, { avatar_url: publicUrl });
+    return this.userRepository.update(requestUser.id, { avatar_url: newUrl });
   }
 
   // ИЗМЕНЕНИЕ КАРТИНКИ HEADER
@@ -72,25 +65,21 @@ export class UserService {
       throw new CustomError(404, 'User not found');
     }
 
-    const ext = file.mimetype.split('/')[1] || 'png';
-    const objectKey = `users/${requestUser.id}/header-${Date.now()}.${ext}`;
+    const newUrl = (file as any).path as string | undefined;
+    if (!newUrl) {
+      throw new CustomError(400, 'File does not uploaded.');
+    }
 
-    await minioClient.putObject(minioBucket, objectKey, file.buffer, file.size, {
-      'Content-Type': file.mimetype,
-    });
-
-    const oldKey = user.header_url
-      ? extractObjectKeyFromPublicUrl(user.header_url)
+    const oldPublicId = user.header_url
+      ? extractCloudinaryPublicIdFromUrl(user.header_url)
       : null;
 
-    if (oldKey) {
+    if (oldPublicId) {
       try {
-        await minioClient.removeObject(minioBucket, oldKey);
+        await cloudinary.uploader.destroy(oldPublicId, { resource_type: 'image' });
       } catch {}
     }
 
-    const publicUrl = buildPublicObjectUrl(objectKey);
-
-    return this.userRepository.update(requestUser.id, { header_url: publicUrl });
+    return this.userRepository.update(requestUser.id, { header_url: newUrl });
   }
 }

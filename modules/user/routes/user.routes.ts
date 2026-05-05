@@ -1,9 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import passport from '../../../config/passport.js';
 import { roles } from '../../../shared/middleware/roles.js';
+import { handleValidation } from '../../../shared/middleware/handleValidation.js';
 import { UserRole, User } from '../model/user.model.js';
 import { UserService } from '../service/user.service.js';
 import upload from '../../../config/multer.js';
+import { userSearchValidator } from '../validator/user.validator.js';
 
 export const createUserRouter = (userService: UserService): Router => {
   const router = Router();
@@ -27,16 +29,21 @@ export const createUserRouter = (userService: UserService): Router => {
    *       400:
    *         description: Bad Request
    */
-  router.get('/search', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const query = String(req.query.query || '');
-      const users = await userService.searchUsers(query);
+  router.get(
+    '/search',
+    userSearchValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const query = String(req.query.query || '');
+        const users = await userService.searchUsers(query);
 
-      res.status(200).json(users);
-    } catch (error) {
-      next(error);
-    }
-  });
+        res.status(200).json(users);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА
   /**

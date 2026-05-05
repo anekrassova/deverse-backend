@@ -8,6 +8,7 @@ import { optionalJwt } from '../../../shared/middleware/optionalJwt.js';
 import { UserRole, User } from '../../user/model/user.model.js';
 
 import { PostService } from '../service/post.service.js';
+import { improvePostValidator } from '../validator/post.validator.js';
 
 export const createPostRouter = (postService: PostService): Router => {
   const router = Router();
@@ -202,6 +203,8 @@ export const createPostRouter = (postService: PostService): Router => {
     '/improve',
     passport.authenticate('jwt', { session: false }),
     roles([UserRole.User, UserRole.Admin]),
+    improvePostValidator,
+    handleValidation,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const reqUser = req.user as User;
