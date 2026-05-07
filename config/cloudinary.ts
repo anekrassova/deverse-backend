@@ -1,8 +1,14 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-// Cloudinary автоматически читает CLOUDINARY_URL из переменных окружения.
-// Мы просто вызываем config(), чтобы применить env-настройки.
-cloudinary.config({});
+const cloudinaryUrl = process.env.CLOUDINARY_URL?.trim();
+
+// Используем только CLOUDINARY_URL.
+// Важно: в режиме DOCS_ONLY=1 Cloudinary может быть не настроен — тогда просто не ломаем старт приложения.
+if (cloudinaryUrl) {
+  cloudinary.config({ cloudinary_url: cloudinaryUrl, secure: true });
+} else {
+  cloudinary.config({ secure: true });
+}
 
 export const extractCloudinaryPublicIdFromUrl = (url: string) => {
   try {
@@ -29,4 +35,3 @@ export const extractCloudinaryPublicIdFromUrl = (url: string) => {
 };
 
 export default cloudinary;
-

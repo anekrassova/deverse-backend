@@ -5,7 +5,6 @@ import { initDatabase } from './config/database.js';
 import { setupAssociations } from './shared/associations.js';
 import passport from './config/passport.js';
 import swaggerUi from 'swagger-ui-express';
-import { initMinio } from './config/minio.js';
 
 import { userRoutes } from './modules/user';
 import { postRoutes } from './modules/post';
@@ -37,7 +36,6 @@ app.use(passport.initialize());
   if (!docsOnly) {
     await initDatabase();
     setupAssociations();
-    await initMinio();
 
     app.use('/user', userRoutes());
     app.use('/post', postRoutes());
