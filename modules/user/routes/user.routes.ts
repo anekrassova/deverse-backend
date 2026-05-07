@@ -141,5 +141,7 @@ export const createUserRouter = (userService: UserService): Router => {
     },
   );
 
+  //todo: get user by id
+
   return router;
 };

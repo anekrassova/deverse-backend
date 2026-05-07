@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write './**/*.{ts,tsx,js,json,md}'",
-    "dev": "nodemon --watch . --ext ts --exec tsx index.ts"
+    "dev": "nodemon --watch . --ext ts --exec tsx index.ts",
+    "start": "tsx index.ts"
   },
   "keywords": [],
   "author": "",
