@@ -31,6 +31,16 @@ export class UserRepository {
     return User.findOne({ where: { id } });
   }
 
+  // НАЙТИ ПОЛЬЗОВАТЕЛЯ ПО АЙДИ (ПУБЛИЧНО)
+  async findPublicById(id: number): Promise<User | null> {
+    return User.findOne({
+      where: { id },
+      attributes: {
+        exclude: ['password', 'created_at', 'updated_at'],
+      },
+    });
+  }
+
   // СОЗДАНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
   async create(data: CreateUserData): Promise<User> {
     return User.create(data);

@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import passport from '../../../config/passport.js';
 import { roles } from '../../../shared/middleware/roles.js';
 import { handleValidation } from '../../../shared/middleware/handleValidation.js';
+import { idParamValidator } from '../../../shared/validator/idParamValidator.js';
 import { UserRole, User } from '../model/user.model.js';
 import { UserService } from '../service/user.service.js';
 import upload from '../../../config/multer.js';
@@ -141,7 +142,40 @@ export const createUserRouter = (userService: UserService): Router => {
     },
   );
 
-  //todo: get user by id
+  // ПОЛУЧИТЬ ПОЛЬЗОВАТЕЛЯ ПО АЙДИ
+  /**
+   * @openapi
+   * /user/get/{id}:
+   *   get:
+   *     tags: [user]
+   *     summary: Get user by id (JWT no, public)
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: number
+   *     responses:
+   *       200:
+   *         description: OK
+   *       404:
+   *         description: User not found
+   */
+  router.get(
+    '/get/:id',
+    idParamValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const id = Number(req.params.id);
+        const user = await userService.getUserById(id);
+
+        res.status(200).json(user);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
   return router;
 };
