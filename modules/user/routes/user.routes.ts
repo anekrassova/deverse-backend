@@ -85,7 +85,31 @@ export const createUserRouter = (userService: UserService): Router => {
         const reqUser = req.user as User;
         const file = req.file as Express.Multer.File;
 
+        console.log('[changeProfileAvatar] request received', {
+          userId: reqUser?.id,
+          headers: {
+            'content-type': req.headers['content-type'],
+            authorization: req.headers.authorization ? 'present' : 'missing',
+          },
+          body: req.body,
+          file: file
+            ? {
+                fieldname: file.fieldname,
+                originalname: file.originalname,
+                mimetype: file.mimetype,
+                size: file.size,
+                path: (file as any).path,
+                filename: (file as any).filename,
+              }
+            : null,
+        });
+
         const user = await userService.changeProfileAvatar(reqUser, file);
+
+        console.log('[changeProfileAvatar] success', {
+          userId: reqUser?.id,
+          avatarUrl: user.avatar_url,
+        });
 
         res.status(200).json(user);
       } catch (error) {
@@ -179,3 +203,5 @@ export const createUserRouter = (userService: UserService): Router => {
 
   return router;
 };
+
+// todo: ai рекомендации по улучшению профиля

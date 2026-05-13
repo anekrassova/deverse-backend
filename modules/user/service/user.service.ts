@@ -29,21 +29,45 @@ export class UserService {
 
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА
   async changeProfileAvatar(requestUser: User, file: Express.Multer.File) {
+    console.log('[changeProfileAvatar] service input', {
+      requestUserId: requestUser?.id,
+      file: file
+        ? {
+            fieldname: file.fieldname,
+            originalname: file.originalname,
+            mimetype: file.mimetype,
+            size: file.size,
+            path: (file as any).path,
+            filename: (file as any).filename,
+          }
+        : null,
+    });
+
     if (!file) {
+      console.log('[changeProfileAvatar] rejected: req.file is empty');
       throw new CustomError(400, 'File does not uploaded.');
     }
 
     if (!file.mimetype.startsWith('image/')) {
+      console.log('[changeProfileAvatar] rejected: mimetype is not image/*', {
+        mimetype: file.mimetype,
+      });
       throw new CustomError(400, 'Only images allowed');
     }
 
     const user = await this.userRepository.findById(requestUser.id);
     if (!user) {
+      console.log('[changeProfileAvatar] rejected: user not found', {
+        requestUserId: requestUser.id,
+      });
       throw new CustomError(404, 'User not found');
     }
 
     const newUrl = (file as any).path as string | undefined;
     if (!newUrl) {
+      console.log('[changeProfileAvatar] rejected: uploaded file has no path', {
+        file,
+      });
       throw new CustomError(400, 'File does not uploaded.');
     }
 
@@ -56,6 +80,13 @@ export class UserService {
         await cloudinary.uploader.destroy(oldPublicId, { resource_type: 'image' });
       } catch {}
     }
+
+    console.log('[changeProfileAvatar] updating user avatar', {
+      requestUserId: requestUser.id,
+      oldAvatarUrl: user.avatar_url,
+      newAvatarUrl: newUrl,
+      oldPublicId,
+    });
 
     return this.userRepository.update(requestUser.id, { avatar_url: newUrl });
   }

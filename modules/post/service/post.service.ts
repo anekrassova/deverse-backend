@@ -65,7 +65,7 @@ export class PostService {
       Improve the following post content.
       Keep the same language.
       Keep the meaning.
-      Make it clearer and more readable.
+      Improve punctuation and correct grammatical mistakes.
       Return only improved text, without any additional comments.
       Post content:
       ${content}

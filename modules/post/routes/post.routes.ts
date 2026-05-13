@@ -175,10 +175,10 @@ export const createPostRouter = (postService: PostService): Router => {
   // УЛУЧШЕНИЕ ПОСТА С ИИ
   /**
    * @openapi
-   * /post/improve:
+   * /post/improve-grammar:
    *   post:
    *     tags: [post]
-   *     summary: Improve post content (JWT required, roles User/Admin)
+   *     summary: Improve post grammar and punctuation (JWT required, roles User/Admin)
    *     security:
    *       - bearerAuth: []
    *     requestBody:
@@ -200,7 +200,7 @@ export const createPostRouter = (postService: PostService): Router => {
    *         description: Forbidden
    */
   router.post(
-    '/improve',
+    '/improve-grammar',
     passport.authenticate('jwt', { session: false }),
     roles([UserRole.User, UserRole.Admin]),
     improvePostValidator,
@@ -218,6 +218,8 @@ export const createPostRouter = (postService: PostService): Router => {
       }
     },
   );
+
+  // todo: tone rewrite presets (переписывание поста по тону)
 
   // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
   /**
