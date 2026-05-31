@@ -16,22 +16,23 @@ export class AiService {
       input: prompt,
     });
 
-    // console.debug('[AI] outputs:', JSON.stringify(interaction.outputs, null, 2));
+    // Для нового steps schema используем output_text как основной способ чтения ответа.
+    if (interaction.output_text) {
+      return interaction.output_text;
+    }
 
-    if (!interaction.outputs?.length) {
+    // Fallback на переходный период, если окружение еще возвращает legacy outputs.
+    const legacyOutputs = (interaction as { outputs?: Array<{ type?: string; text?: string }> })
+      .outputs;
+
+    if (!legacyOutputs?.length) {
       return '';
     }
 
-    const text =
-      interaction.outputs
-        ?.filter(
-          (
-            part,
-          ): part is Extract<(typeof interaction.outputs)[number], { type: 'text' }> =>
-            part.type === 'text',
-        )
-        .map((part) => part.text)
-        .join('') ?? '';
+    const text = legacyOutputs
+      .filter((part) => part.type === 'text' && typeof part.text === 'string')
+      .map((part) => part.text as string)
+      .join('');
 
     return text;
   }

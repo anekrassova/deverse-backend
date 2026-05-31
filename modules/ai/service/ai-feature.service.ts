@@ -14,6 +14,7 @@ export class AiFeatureService {
       Keep the answer concise and useful.
       Do not pretend to know information you do not know.
       Return only the final answer text, without any extra comments.
+      Do not use text formatting in the response.
       User question:
       ${question}
       `;

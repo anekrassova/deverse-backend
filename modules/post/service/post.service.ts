@@ -69,6 +69,7 @@ export class PostService {
       Keep the meaning.
       Improve punctuation and correct grammatical mistakes.
       Return only improved text, without any additional comments.
+      Do not use text formatting in the response.
       Post content:
       ${content}
       `;
@@ -90,6 +91,7 @@ export class PostService {
       Keep the original meaning.
       Rewrite the text in ${tone} tone.
       Return only rewritten text, without any additional comments or markdown.
+      Do not use text formatting in the response.
       Post content:
       ${content}
       `;
