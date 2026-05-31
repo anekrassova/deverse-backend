@@ -5,6 +5,8 @@ import { User } from '../../user/model/user.model.js';
 import { AiService } from '../../ai/ai.service.js';
 import { PostCommentRepository } from '../repository/post_comment.repository.js';
 
+export type PostRewriteTone = 'formal' | 'friendly' | 'short';
+
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
@@ -78,6 +80,27 @@ export class PostService {
     const improved = 'Это улучшенное содержание поста!';
 
     return { content: improved };
+  }
+
+  // ПЕРЕПИСЫВАНИЕ ПОСТА ПО ТОНУ С ИИ
+  async rewritePostTone(content: string, tone: PostRewriteTone, requestUser: User) {
+    const prompt = `
+      Rewrite the following post content.
+      Keep the same language.
+      Keep the original meaning.
+      Rewrite the text in ${tone} tone.
+      Return only rewritten text, without any additional comments or markdown.
+      Post content:
+      ${content}
+      `;
+
+    // реальный запрос к апи раскоментить
+    //const rewritten = await this.aiService.generate(prompt);
+
+    // это моковое, закомментить при реальном обращении к апи
+    const rewritten = 'Это переписанное содержание поста в выбранном тоне.';
+
+    return { content: rewritten };
   }
 
   // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ

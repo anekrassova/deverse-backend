@@ -9,6 +9,7 @@ import swaggerUi from 'swagger-ui-express';
 import { userRoutes } from './modules/user';
 import { postRoutes } from './modules/post';
 import { projectRoutes } from './modules/project';
+import { aiRoutes } from './modules/ai';
 
 import { errorHandler } from './shared/middleware/handleError';
 import { swaggerSpec } from './config/swagger.js';
@@ -40,6 +41,7 @@ app.use(passport.initialize());
     app.use('/user', userRoutes());
     app.use('/post', postRoutes());
     app.use('/project', projectRoutes());
+    app.use('/ai', aiRoutes());
   }
 
   app.use(errorHandler);

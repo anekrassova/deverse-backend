@@ -13,6 +13,10 @@ export interface CreateUserData {
 export interface UpdateUserData {
   avatar_url?: string | null;
   header_url?: string | null;
+  name?: string;
+  surname?: string;
+  username?: string;
+  profession?: string;
 }
 
 export class UserRepository {

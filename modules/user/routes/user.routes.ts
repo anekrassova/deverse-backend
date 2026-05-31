@@ -6,7 +6,7 @@ import { idParamValidator } from '../../../shared/validator/idParamValidator.js'
 import { UserRole, User } from '../model/user.model.js';
 import { UserService } from '../service/user.service.js';
 import upload from '../../../config/multer.js';
-import { userSearchValidator } from '../validator/user.validator.js';
+import { updateProfileValidator, userSearchValidator } from '../validator/user.validator.js';
 
 export const createUserRouter = (userService: UserService): Router => {
   const router = Router();
@@ -40,6 +40,60 @@ export const createUserRouter = (userService: UserService): Router => {
         const users = await userService.searchUsers(query);
 
         res.status(200).json(users);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  // РЕДАКТИРОВАНИЕ ПРОФИЛЯ
+  /**
+   * @openapi
+   * /user/updateProfile:
+   *   patch:
+   *     tags: [user]
+   *     summary: Update current user profile (JWT required, roles User/Admin)
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UserUpdateProfileRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/UserPublicResponse'
+   *       400:
+   *         description: Bad Request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   */
+  router.patch(
+    '/updateProfile',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.User, UserRole.Admin]),
+    updateProfileValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const reqUser = req.user as User;
+        const { name, surname, username, profession } = req.body;
+
+        const user = await userService.updateProfile(reqUser, {
+          name,
+          surname,
+          username,
+          profession,
+        });
+
+        res.status(200).json(user);
       } catch (error) {
         next(error);
       }
@@ -203,5 +257,3 @@ export const createUserRouter = (userService: UserService): Router => {
 
   return router;
 };
-
-// todo: ai рекомендации по улучшению профиля

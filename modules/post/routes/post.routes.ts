@@ -8,7 +8,10 @@ import { optionalJwt } from '../../../shared/middleware/optionalJwt.js';
 import { UserRole, User } from '../../user/model/user.model.js';
 
 import { PostService } from '../service/post.service.js';
-import { improvePostValidator } from '../validator/post.validator.js';
+import {
+  improvePostValidator,
+  rewritePostToneValidator,
+} from '../validator/post.validator.js';
 
 export const createPostRouter = (postService: PostService): Router => {
   const router = Router();
@@ -219,7 +222,54 @@ export const createPostRouter = (postService: PostService): Router => {
     },
   );
 
-  // todo: tone rewrite presets (переписывание поста по тону)
+  // ПЕРЕПИСЫВАНИЕ ПОСТА ПО ТОНУ С ИИ
+  /**
+   * @openapi
+   * /post/rewrite-tone:
+   *   post:
+   *     tags: [post]
+   *     summary: Rewrite post content in selected tone (JWT required, roles User/Admin). Valid tone types: ['formal', 'friendly', 'short']
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/PostRewriteToneRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/PostRewriteToneResponse'
+   *       400:
+   *         description: Bad Request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   */
+  router.post(
+    '/rewrite-tone',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.User, UserRole.Admin]),
+    rewritePostToneValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const reqUser = req.user as User;
+        const { content, tone } = req.body;
+
+        const result = await postService.rewritePostTone(content, tone, reqUser);
+
+        res.status(200).json(result);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
   // ПОЛУЧИТЬ КОММЕНТАРИИ К ПОСТУ
   /**

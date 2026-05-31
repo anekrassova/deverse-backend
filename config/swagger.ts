@@ -11,6 +11,7 @@ export const swaggerSpec = swaggerJSDoc({
     tags: [
       { name: 'user' },
       { name: 'post' },
+      { name: 'ai' },
       { name: 'comment' },
       { name: 'like' },
       { name: 'project' },
@@ -62,6 +63,30 @@ export const swaggerSpec = swaggerJSDoc({
             },
           },
         },
+        UserUpdateProfileRequest: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            surname: { type: 'string' },
+            username: { type: 'string' },
+            profession: { type: 'string' },
+          },
+        },
+        UserPublicResponse: {
+          type: 'object',
+          required: ['id', 'email', 'username', 'name', 'surname', 'profession', 'role'],
+          properties: {
+            id: { type: 'number' },
+            email: { type: 'string', format: 'email' },
+            username: { type: 'string' },
+            name: { type: 'string' },
+            surname: { type: 'string' },
+            profession: { type: 'string' },
+            avatar_url: { type: 'string', nullable: true },
+            header_url: { type: 'string', nullable: true },
+            role: { type: 'string' },
+          },
+        },
         PostCreateRequest: {
           type: 'object',
           required: ['content'],
@@ -90,11 +115,43 @@ export const swaggerSpec = swaggerJSDoc({
             content: { type: 'string' },
           },
         },
+        PostRewriteToneRequest: {
+          type: 'object',
+          required: ['content', 'tone'],
+          properties: {
+            content: { type: 'string' },
+            tone: {
+              type: 'string',
+              enum: ['formal', 'friendly', 'short'],
+            },
+          },
+        },
+        PostRewriteToneResponse: {
+          type: 'object',
+          required: ['content'],
+          properties: {
+            content: { type: 'string' },
+          },
+        },
         PostSummaryResponse: {
           type: 'object',
           required: ['summary'],
           properties: {
             summary: { type: 'string' },
+          },
+        },
+        AiAskRequest: {
+          type: 'object',
+          required: ['question'],
+          properties: {
+            question: { type: 'string' },
+          },
+        },
+        AiAskResponse: {
+          type: 'object',
+          required: ['answer'],
+          properties: {
+            answer: { type: 'string' },
           },
         },
         CommentCreateRequest: {

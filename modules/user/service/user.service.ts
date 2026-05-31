@@ -1,5 +1,5 @@
 import { CustomError } from '../../../shared/errors.js';
-import { UserRepository } from '../repository/user.repository.js';
+import { UserRepository, UpdateUserData } from '../repository/user.repository.js';
 import { User } from '../model/user.model.js';
 import cloudinary, {
   extractCloudinaryPublicIdFromUrl,
@@ -25,6 +25,23 @@ export class UserService {
     }
 
     return this.userRepository.search(query);
+  }
+
+  // РЕДАКТИРОВАНИЕ ПРОФИЛЯ
+  async updateProfile(requestUser: User, data: UpdateUserData) {
+    const user = await this.userRepository.findById(requestUser.id);
+    if (!user) {
+      throw new CustomError(404, 'User not found');
+    }
+
+    if (data.username && data.username !== user.username) {
+      const usernameExists = await this.userRepository.findByUsername(data.username);
+      if (usernameExists && usernameExists.id !== requestUser.id) {
+        throw new CustomError(400, 'Username already in use');
+      }
+    }
+
+    return this.userRepository.update(requestUser.id, data);
   }
 
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА
