@@ -228,7 +228,7 @@ export const createPostRouter = (postService: PostService): Router => {
    * /post/rewrite-tone:
    *   post:
    *     tags: [post]
-   *     summary: Rewrite post content in selected tone (JWT required, roles User/Admin). Valid tone types: ['formal', 'friendly', 'short']
+   *     summary: Rewrite post content in selected tone (JWT required, roles User/Admin) formal/friendly/short
    *     security:
    *       - bearerAuth: []
    *     requestBody:

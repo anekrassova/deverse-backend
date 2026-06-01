@@ -75,10 +75,10 @@ export class PostService {
       `;
 
     // реальный запрос к апи раскоментить
-    // const improved = await this.aiService.generate(prompt);
+    const improved = await this.aiService.generate(prompt);
 
     // это моковое, закомментить при реальном обращении к апи
-    const improved = 'Это улучшенное содержание поста!';
+    //const improved = 'Это улучшенное содержание поста!';
 
     return { content: improved };
   }
@@ -97,10 +97,10 @@ export class PostService {
       `;
 
     // реальный запрос к апи раскоментить
-    //const rewritten = await this.aiService.generate(prompt);
+    const rewritten = await this.aiService.generate(prompt);
 
     // это моковое, закомментить при реальном обращении к апи
-    const rewritten = 'Это переписанное содержание поста в выбранном тоне.';
+    //const rewritten = 'Это переписанное содержание поста в выбранном тоне.';
 
     return { content: rewritten };
   }

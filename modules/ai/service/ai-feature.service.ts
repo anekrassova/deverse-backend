@@ -20,10 +20,10 @@ export class AiFeatureService {
       `;
 
     // реальный запрос к апи раскоментить
-    //const answer = await this.aiService.generate(prompt);
+    const answer = await this.aiService.generate(prompt);
 
     // это моковое, закомментить при реальном обращении к апи
-    const answer = 'Это ответ ИИ по теме проекта, программирования или другой IT-теме.';
+    //const answer = 'Это ответ ИИ по теме проекта, программирования или другой IT-теме.';
 
     return { answer };
   }
