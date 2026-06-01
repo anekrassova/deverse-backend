@@ -4,6 +4,7 @@ import { User } from '../model/user.model.js';
 import cloudinary, {
   extractCloudinaryPublicIdFromUrl,
 } from '../../../config/cloudinary.js';
+import bcrypt from 'bcrypt';
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
@@ -42,6 +43,30 @@ export class UserService {
     }
 
     return this.userRepository.update(requestUser.id, data);
+  }
+
+  // СМЕНА ПАРОЛЯ
+  async changePassword(requestUser: User, password: string) {
+    const user = await this.userRepository.findById(requestUser.id);
+    if (!user) {
+      throw new CustomError(404, 'User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    return this.userRepository.update(requestUser.id, { password: hashedPassword });
+  }
+
+  // АДМИНСКАЯ СМЕНА ПАРОЛЯ ПО ЭМЕЙЛУ
+  async changePasswordByEmail(email: string, password: string) {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new CustomError(404, 'User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    return this.userRepository.update(user.id, { password: hashedPassword });
   }
 
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА

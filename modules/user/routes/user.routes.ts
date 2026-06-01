@@ -6,7 +6,12 @@ import { idParamValidator } from '../../../shared/validator/idParamValidator.js'
 import { UserRole, User } from '../model/user.model.js';
 import { UserService } from '../service/user.service.js';
 import upload from '../../../config/multer.js';
-import { updateProfileValidator, userSearchValidator } from '../validator/user.validator.js';
+import {
+  adminChangePasswordValidator,
+  changePasswordValidator,
+  updateProfileValidator,
+  userSearchValidator,
+} from '../validator/user.validator.js';
 
 export const createUserRouter = (userService: UserService): Router => {
   const router = Router();
@@ -92,6 +97,105 @@ export const createUserRouter = (userService: UserService): Router => {
           username,
           profession,
         });
+
+        res.status(200).json(user);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  // СМЕНА ПАРОЛЯ
+  /**
+   * @openapi
+   * /user/changePassword:
+   *   patch:
+   *     tags: [user]
+   *     summary: Change current user password (JWT required, roles User/Admin)
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UserChangePasswordRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/UserPublicResponse'
+   *       400:
+   *         description: Bad Request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   */
+  router.patch(
+    '/changePassword',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.User, UserRole.Admin]),
+    changePasswordValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const reqUser = req.user as User;
+        const { password } = req.body;
+
+        const user = await userService.changePassword(reqUser, password);
+
+        res.status(200).json(user);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  // АДМИНСКАЯ СМЕНА ПАРОЛЯ ПО ЭМЕЙЛУ
+  /**
+   * @openapi
+   * /user/changePasswordByEmail:
+   *   patch:
+   *     tags: [user]
+   *     summary: Change any user password by email (JWT required, role Admin only)
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UserAdminChangePasswordRequest'
+   *     responses:
+   *       200:
+   *         description: OK
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/UserPublicResponse'
+   *       400:
+   *         description: Bad Request
+   *       401:
+   *         description: Unauthorized
+   *       403:
+   *         description: Forbidden
+   *       404:
+   *         description: User not found
+   */
+  router.patch(
+    '/changePasswordByEmail',
+    passport.authenticate('jwt', { session: false }),
+    roles([UserRole.Admin]),
+    adminChangePasswordValidator,
+    handleValidation,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { email, password } = req.body;
+
+        const user = await userService.changePasswordByEmail(email, password);
 
         res.status(200).json(user);
       } catch (error) {

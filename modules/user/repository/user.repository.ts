@@ -17,6 +17,7 @@ export interface UpdateUserData {
   surname?: string;
   username?: string;
   profession?: string;
+  password?: string;
 }
 
 export class UserRepository {

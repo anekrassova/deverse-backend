@@ -72,6 +72,21 @@ export const swaggerSpec = swaggerJSDoc({
             profession: { type: 'string' },
           },
         },
+        UserChangePasswordRequest: {
+          type: 'object',
+          required: ['password'],
+          properties: {
+            password: { type: 'string', format: 'password' },
+          },
+        },
+        UserAdminChangePasswordRequest: {
+          type: 'object',
+          required: ['email', 'password'],
+          properties: {
+            email: { type: 'string', format: 'email' },
+            password: { type: 'string', format: 'password' },
+          },
+        },
         UserPublicResponse: {
           type: 'object',
           required: ['id', 'email', 'username', 'name', 'surname', 'profession', 'role'],

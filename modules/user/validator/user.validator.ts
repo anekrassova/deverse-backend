@@ -65,3 +65,27 @@ export const updateProfileValidator = [
     .isLength({ min: 1, max: 255 })
     .withMessage('Profession must be 1–255 characters.'),
 ];
+
+export const changePasswordValidator = [
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required.')
+    .isString()
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters.'),
+];
+
+export const adminChangePasswordValidator = [
+  body('email')
+    .notEmpty()
+    .withMessage('Email is required.')
+    .isEmail()
+    .withMessage('Invalid email format.'),
+
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required.')
+    .isString()
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters.'),
+];
