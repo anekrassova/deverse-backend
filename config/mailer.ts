@@ -1,37 +1,20 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { logger } from '../shared/logger.js';
 
-const smtpPort = Number(process.env.SMTP_PORT) || 1025;
-
-export const mailer = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'localhost',
-  port: smtpPort,
-  secure: false,
-  requireTLS: true,
-  auth:
-    process.env.SMTP_USER && process.env.SMTP_PASSWORD
-      ? {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
-        }
-      : undefined,
-});
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export const sendMail = async (
   to: string,
   subject: string,
   text: string,
 ): Promise<void> => {
-  const from = process.env.SMTP_FROM || 'no-reply@local.dev';
+  const from = process.env.RESEND_FROM || process.env.SMTP_FROM || 'no-reply@local.dev';
 
   logger.debug({
-    msg: '[mailer] preparing email send',
-    smtp: {
-      host: process.env.SMTP_HOST || 'localhost',
-      port: smtpPort,
-      secure: false,
-      requireTLS: true,
-      hasAuth: Boolean(process.env.SMTP_USER && process.env.SMTP_PASSWORD),
+    msg: '[mailer] preparing resend email send',
+    resend: {
+      hasApiKey: Boolean(resendApiKey),
     },
     message: {
       from,
@@ -41,40 +24,71 @@ export const sendMail = async (
     },
   });
 
+  if (!resend) {
+    const error = new Error('RESEND_API_KEY is not configured.');
+
+    logger.error(
+      {
+        err: error,
+        msg: '[mailer] resend is not configured',
+        message: {
+          from,
+          to,
+          subject,
+          textLength: text.length,
+        },
+      },
+      'Email send failed',
+    );
+
+    throw error;
+  }
+
   try {
-    const info = await mailer.sendMail({
+    const { data, error } = await resend.emails.send({
       from,
       to,
       subject,
       text,
     });
 
+    if (error) {
+      logger.error(
+        {
+          msg: '[mailer] resend email send failed',
+          resend: {
+            name: error.name,
+            message: error.message,
+          },
+          message: {
+            from,
+            to,
+            subject,
+            textLength: text.length,
+          },
+        },
+        'Email send failed',
+      );
+
+      throw new Error(error.message);
+    }
+
     logger.info({
-      msg: '[mailer] email sent successfully',
+      msg: '[mailer] resend email sent successfully',
       message: {
         from,
         to,
         subject,
       },
-      transport: {
-        messageId: info.messageId,
-        accepted: info.accepted,
-        rejected: info.rejected,
-        response: info.response,
+      resend: {
+        emailId: data?.id,
       },
     });
   } catch (error) {
     logger.error(
       {
         err: error,
-        msg: '[mailer] email send failed',
-        smtp: {
-          host: process.env.SMTP_HOST || 'localhost',
-          port: smtpPort,
-          secure: false,
-          requireTLS: true,
-          hasAuth: Boolean(process.env.SMTP_USER && process.env.SMTP_PASSWORD),
-        },
+        msg: '[mailer] resend email send failed',
         message: {
           from,
           to,
