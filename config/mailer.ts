@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { logger } from '../shared/logger.js';
 
 const smtpPort = Number(process.env.SMTP_PORT) || 1025;
 
@@ -23,10 +24,67 @@ export const sendMail = async (
 ): Promise<void> => {
   const from = process.env.SMTP_FROM || 'no-reply@local.dev';
 
-  await mailer.sendMail({
-    from,
-    to,
-    subject,
-    text,
+  logger.debug({
+    msg: '[mailer] preparing email send',
+    smtp: {
+      host: process.env.SMTP_HOST || 'localhost',
+      port: smtpPort,
+      secure: false,
+      requireTLS: true,
+      hasAuth: Boolean(process.env.SMTP_USER && process.env.SMTP_PASSWORD),
+    },
+    message: {
+      from,
+      to,
+      subject,
+      textLength: text.length,
+    },
   });
+
+  try {
+    const info = await mailer.sendMail({
+      from,
+      to,
+      subject,
+      text,
+    });
+
+    logger.info({
+      msg: '[mailer] email sent successfully',
+      message: {
+        from,
+        to,
+        subject,
+      },
+      transport: {
+        messageId: info.messageId,
+        accepted: info.accepted,
+        rejected: info.rejected,
+        response: info.response,
+      },
+    });
+  } catch (error) {
+    logger.error(
+      {
+        err: error,
+        msg: '[mailer] email send failed',
+        smtp: {
+          host: process.env.SMTP_HOST || 'localhost',
+          port: smtpPort,
+          secure: false,
+          requireTLS: true,
+          hasAuth: Boolean(process.env.SMTP_USER && process.env.SMTP_PASSWORD),
+        },
+        message: {
+          from,
+          to,
+          subject,
+          textLength: text.length,
+        },
+      },
+      'Email send failed',
+    );
+
+    throw error;
+  }
 };

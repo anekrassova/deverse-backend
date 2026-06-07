@@ -5,6 +5,7 @@ import cloudinary, {
   extractCloudinaryPublicIdFromUrl,
 } from '../../../config/cloudinary.js';
 import bcrypt from 'bcrypt';
+import { logger } from '../../../shared/logger.js';
 
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
@@ -71,7 +72,8 @@ export class UserService {
 
   // ИЗМЕНЕНИЕ КАРТИНКИ АВАТАРА
   async changeProfileAvatar(requestUser: User, file: Express.Multer.File) {
-    console.log('[changeProfileAvatar] service input', {
+    logger.debug({
+      msg: '[changeProfileAvatar] service input',
       requestUserId: requestUser?.id,
       file: file
         ? {
@@ -86,12 +88,13 @@ export class UserService {
     });
 
     if (!file) {
-      console.log('[changeProfileAvatar] rejected: req.file is empty');
+      logger.debug({ msg: '[changeProfileAvatar] rejected: req.file is empty' });
       throw new CustomError(400, 'File does not uploaded.');
     }
 
     if (!file.mimetype.startsWith('image/')) {
-      console.log('[changeProfileAvatar] rejected: mimetype is not image/*', {
+      logger.debug({
+        msg: '[changeProfileAvatar] rejected: mimetype is not image/*',
         mimetype: file.mimetype,
       });
       throw new CustomError(400, 'Only images allowed');
@@ -99,7 +102,8 @@ export class UserService {
 
     const user = await this.userRepository.findById(requestUser.id);
     if (!user) {
-      console.log('[changeProfileAvatar] rejected: user not found', {
+      logger.debug({
+        msg: '[changeProfileAvatar] rejected: user not found',
         requestUserId: requestUser.id,
       });
       throw new CustomError(404, 'User not found');
@@ -107,8 +111,18 @@ export class UserService {
 
     const newUrl = (file as any).path as string | undefined;
     if (!newUrl) {
-      console.log('[changeProfileAvatar] rejected: uploaded file has no path', {
-        file,
+      logger.debug({
+        msg: '[changeProfileAvatar] rejected: uploaded file has no path',
+        file: file
+          ? {
+              fieldname: file.fieldname,
+              originalname: file.originalname,
+              mimetype: file.mimetype,
+              size: file.size,
+              path: (file as any).path,
+              filename: (file as any).filename,
+            }
+          : null,
       });
       throw new CustomError(400, 'File does not uploaded.');
     }
@@ -123,7 +137,8 @@ export class UserService {
       } catch {}
     }
 
-    console.log('[changeProfileAvatar] updating user avatar', {
+    logger.debug({
+      msg: '[changeProfileAvatar] updating user avatar',
       requestUserId: requestUser.id,
       oldAvatarUrl: user.avatar_url,
       newAvatarUrl: newUrl,

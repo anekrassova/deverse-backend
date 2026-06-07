@@ -6,6 +6,7 @@ import { idParamValidator } from '../../../shared/validator/idParamValidator.js'
 import { UserRole, User } from '../model/user.model.js';
 import { UserService } from '../service/user.service.js';
 import upload from '../../../config/multer.js';
+import { logger } from '../../../shared/logger.js';
 import {
   adminChangePasswordValidator,
   changePasswordValidator,
@@ -243,7 +244,8 @@ export const createUserRouter = (userService: UserService): Router => {
         const reqUser = req.user as User;
         const file = req.file as Express.Multer.File;
 
-        console.log('[changeProfileAvatar] request received', {
+        logger.debug({
+          msg: '[changeProfileAvatar] request received',
           userId: reqUser?.id,
           headers: {
             'content-type': req.headers['content-type'],
@@ -264,7 +266,8 @@ export const createUserRouter = (userService: UserService): Router => {
 
         const user = await userService.changeProfileAvatar(reqUser, file);
 
-        console.log('[changeProfileAvatar] success', {
+        logger.debug({
+          msg: '[changeProfileAvatar] success',
           userId: reqUser?.id,
           avatarUrl: user.avatar_url,
         });

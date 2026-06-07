@@ -1,12 +1,14 @@
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from './cloudinary.js';
+import { logger } from '../shared/logger.js';
 
 const upload = multer({
   storage: new CloudinaryStorage({
     cloudinary,
     params: async (req, file) => {
-      console.log('[multer] preparing cloudinary params', {
+      logger.debug({
+        msg: '[multer] preparing cloudinary params',
         fieldname: file.fieldname,
         originalname: file.originalname,
         mimetype: file.mimetype,
@@ -23,7 +25,8 @@ const upload = multer({
     },
   }),
   fileFilter: (req, file, cb) => {
-    console.log('[multer] fileFilter input', {
+    logger.debug({
+      msg: '[multer] fileFilter input',
       fieldname: file.fieldname,
       originalname: file.originalname,
       mimetype: file.mimetype,
@@ -34,11 +37,11 @@ const upload = multer({
     });
 
     if (file.mimetype.startsWith('image/')) {
-      console.log('[multer] file accepted');
+      logger.debug({ msg: '[multer] file accepted' });
       return cb(null, true);
     }
 
-    console.log('[multer] file rejected because mimetype is not image/*');
+    logger.debug({ msg: '[multer] file rejected because mimetype is not image/*' });
     return cb(null, false);
   },
   limits: { fileSize: 5 * 1024 * 1024 },

@@ -12,6 +12,7 @@ import { projectRoutes } from './modules/project';
 import { aiRoutes } from './modules/ai';
 
 import { errorHandler } from './shared/middleware/handleError';
+import { httpLogger, logger } from './shared/logger.js';
 import { swaggerSpec } from './config/swagger.js';
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors());
 const port = Number(process.env.PORT) || 3000;
 const docsOnly = process.env.DOCS_ONLY === '1';
 
+app.use(httpLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
@@ -47,8 +49,9 @@ app.use(passport.initialize());
   app.use(errorHandler);
 
   app.listen(port, () => {
-    console.log(
-      docsOnly ? `Listening on port ${port} (DOCS_ONLY)` : `Listening on port ${port}`,
+    logger.info(
+      { port, docsOnly },
+      docsOnly ? 'Listening on port (DOCS_ONLY)' : 'Listening on port',
     );
   });
 })();
